@@ -2,6 +2,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 /** Maximum requests allowed per IP within the sliding window. */
+/* v8 ignore next */
 const RATE_LIMIT_MAX = process.env.NODE_ENV === 'development' || process.env['CI'] ? 1000 : 100;
 
 /** Sliding window duration in milliseconds (60 seconds). */

@@ -63,11 +63,12 @@ describe('Edge Middleware', () => {
     expect(response.headers.get('Permissions-Policy')).toContain('camera=()');
   });
 
-  // Test 7: Rate limiter blocks after 20 requests/minute
-  it('blocks requests after 20 requests per minute', () => {
+  // Test 7: Rate limiter blocks after max requests/minute
+  it('blocks requests after max requests per minute', () => {
     const ip = '1.2.3.4';
+    const rateLimit = process.env.NODE_ENV === 'development' || process.env['CI'] ? 1000 : 100;
     
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < rateLimit; i++) {
       const res = proxy(createRequest(ip));
       expect(res.status).not.toBe(429);
     }
@@ -79,8 +80,9 @@ describe('Edge Middleware', () => {
   // Test 8: Rate limiter resets after window expires
   it('allows requests after rate limit window expires', () => {
     const ip = '5.6.7.8';
+    const rateLimit = process.env.NODE_ENV === 'development' || process.env['CI'] ? 1000 : 100;
     
-    for (let i = 0; i < 21; i++) {
+    for (let i = 0; i < rateLimit + 1; i++) {
       proxy(createRequest(ip));
     }
 
